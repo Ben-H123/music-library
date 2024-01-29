@@ -1,8 +1,15 @@
 const express = require('express')
-const createArtist = require('../controllers/artist')
+const artistController = require('../controllers/artist')
+
 
 const router = express.Router()
 
-router.post('/', createArtist.post)
+router.post('/', artistController.createArtist)
+
+router.get('/', artistController.getAllArtists)
+
+router.get('/:id', artistController.getArtistById)
+
+router.patch('/:id', artistController.putArtist)
 
 module.exports = router

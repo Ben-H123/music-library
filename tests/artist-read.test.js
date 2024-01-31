@@ -3,7 +3,6 @@ const { expect } = require('chai')
 const request = require('supertest')
 const db = require('../src/db')
 const app = require('../src/app')
-//const artists = require('../src/controllers/artist')
 
 describe('Read Artists', () => {
   let artists
@@ -41,21 +40,35 @@ describe('Read Artists', () => {
       })
     })
   })
-})
 
-describe('GET /artists/{id}', () => {
-  it('returns the artist with the correct id', async () => {
-    const { status, body } = await request(app).get(`/artists/${artists[0].id}`).send()
+  describe('GET /artists', () => {
+    it('returns all artist records in the database', async () => {
+      const { status, body } = await request(app).get('/artists').send()
 
-    expect(status).to.equal(200)
-    expect(body).to.deep.equal(artists[0])
+      expect(status).to.equal(200)
+      expect(body.length).to.equal(3)
+
+      body.forEach((artistRecord) => {
+        const expected = artists.find((a) => a.id === artistRecord.id)
+
+        expect(artistRecord).to.deep.equal(expected)
+      })
+    })
   })
-
-  it('returns a 404 if the artist does not exist', async () => {
-    const { status, body } = await request(app).get('/artists/999999999').send()
-
-    expect(status).to.equal(404)
-    expect(body.message).to.equal('artist 999999999 does not exist')
+  describe('GET /artists/{id}', () => {
+    it('returns the artist with the correct id', async () => {
+      const { status, body } = await request(app).get(`/artists/${artists[0].id}`).send()
+  
+      expect(status).to.equal(200)
+      expect(body).to.deep.equal(artists[0])
+    })
+  
+    it('returns a 404 if the artist does not exist', async () => {
+      const { status, body } = await request(app).get('/artists/999999999').send()
+  
+      expect(status).to.equal(404)
+      expect(body.message).to.equal('artist 999999999 does not exist')
+    })
   })
 })
 
